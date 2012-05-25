@@ -1,0 +1,70 @@
+<?xml  version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd">
+
+    <!-- Properties files -->
+    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:client.properties"/>
+    </bean>
+
+    <bean id="messageSource"
+          class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+        <property name="basename" value="classpath:messages"/>
+        <property name="defaultEncoding" value="UTF-8"/>
+    </bean>
+
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${ru.webcrafter.jdbc.driverClassName}"/>
+        <property name="url" value="${ru.webcrafter.jdbc.url}"/>
+        <property name="username" value="${ru.webcrafter.jdbc.username}"/>
+        <property name="password" value="${ru.webcrafter.jdbc.password}"/>
+    </bean>
+
+    <bean id="userDetailService" class="org.springframework.security.core.userdetails.jdbc.JdbcDaoImpl">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="usersByUsernameQuery" value="SELECT userName, password, active from ex_user where userName=?"/>
+        <property name="authoritiesByUsernameQuery"
+                  value="SELECT ij.userId, r.name FROM ex_role r INNER JOIN (SELECT u.userId, ur.roleId FROM ex_user_role ur, ex_user u WHERE ur.userId=u.userId AND u.userName=?) ij ON r.roleId=ij.roleId"/>
+    </bean>
+
+    <bean id="hbSessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="annotatedClasses">
+            <list>
+                <value>ru.webcrafter.client.user.UserAuth</value>
+                <value>ru.webcrafter.client.user.Role</value>
+            </list>
+        </property>
+        <property name="hibernateProperties">
+            <value>
+                hibernate.dialect=ru.webcrafter.core.utils.MySQL5InnoDBDialectUTF8
+                hibernate.show_sql=false
+            </value>
+        </property>
+        <property name="schemaUpdate" value="true"/>
+    </bean>
+
+    <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+        <property name="sessionFactory" ref="hbSessionFactory"/>
+    </bean>
+
+    <tx:annotation-driven/>
+
+    <bean id="userService" class="ru.webcrafter.client.user.impl.UserServiceImpl">
+        <property name="userDao">
+            <bean class="ru.webcrafter.client.user.dao.hibernate.HibernateUserDao">
+                <property name="sessionFactory" ref="hbSessionFactory"/>
+            </bean>
+        </property>
+        <property name="roleDao">
+            <bean class="ru.webcrafter.client.user.dao.hibernate.HibernateRoleDao">
+                <property name="sessionFactory" ref="hbSessionFactory"/>
+            </bean>
+        </property>
+    </bean>
+
+
+</beans>

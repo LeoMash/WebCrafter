@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping auto-import="true">
+
+    <class name="ru.webcrafter.core.entities.ItemTemplate" table="ITEM_TEMPLATES">
+        <id name="id" column="ITEM_TEMPLATE_ID" type="string"/>
+        <property name="cost" column="ITEM_TEMPLATE_COST" type="int"/>
+    </class>
+
+    <class name="ru.webcrafter.core.entities.Recipe" table="RECIPES">
+        <id name="id" column="RECIPE_ID" type="string"/>
+        <list name="ingredients" table="RECIPES_INGR" lazy="false">
+            <key column="RECIPE_ID"/>
+            <index column="idx"></index>
+            <many-to-many column="ITEM_TEMPLATE_ID" class="ru.webcrafter.core.entities.ItemTemplate"/>
+        </list>
+        <property name="result" column="RECIPE_RESULT" type="ru.webcrafter.core.entities.ItemTemplate"/>
+    </class>
+
+    <class name="ru.webcrafter.core.entities.User" table="USERS" lazy="false">
+        <id name="id" column="USER_ID" type="long"/>
+        <property name="amount" column="USER_AMOUNT" type="long"/>
+        <map name="items" table="USER_ITEMS" cascade="all" lazy="false">
+            <key column="USER_ID"/>
+            <map-key column="ITEM_TEMPLATE_ID" type="java.lang.String"/>
+            <element column="ITEM_COUNT" type="java.lang.Long"/>
+        </map>
+    </class>
+
+</hibernate-mapping>
+

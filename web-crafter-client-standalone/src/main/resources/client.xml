@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+    <!-- Properties files -->
+    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:client.properties"/>
+    </bean>
+
+    <!-- Remote services -->
+    <alias name="rmiProxy" alias="webcrafterService"/>
+    <bean id="rmiProxy" class="org.springframework.remoting.rmi.RmiProxyFactoryBean">
+        <property name="serviceUrl">
+            <value>rmi://${serverName}:${rmiPort}/WebCrafterService</value>
+        </property>
+        <property name="serviceInterface">
+            <value>ru.webcrafter.core.WebCrafterService</value>
+        </property>
+        <property name="lookupStubOnStartup" value="false"/>
+    </bean>
+
+<!--
+    &lt;!&ndash; User Interface &ndash;&gt;
+    <bean id="mainWindow" class="javax.swing.JFrame" lazy-init="true">
+        <property name="title" value="Northwind Client"/>
+    </bean>
+    <bean id="mainPanel" class="northwind.client.MainPanel">
+        <property name="customerPanel" ref="customerPanel" />
+        <property name="orderPanel" ref="orderPanel" />
+    </bean>
+    <bean id="customerPanel" class="northwind.client.CustomerPanel">
+        <property name="service" ref="northwindService"/>
+        <property name="changeListener" ref="mainPanel"/>
+    </bean>
+    <bean id="orderPanel" class="northwind.client.OrderPanel">
+        <property name="service" ref="northwindService"/>
+    </bean>
+-->
+
+</beans>

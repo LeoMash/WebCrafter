@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">-->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+    <!-- Включаем опцию использования конфигурационных аннотаций (@Annotation-based configuration)-->
+    <context:annotation-config/>
+
+    <!-- Определяем папки, в которых будем автоматически искать бины-компоненты (@Component, @Service)  -->
+    <context:component-scan base-package="ru.webcrafter.server"/>
+
+    <import resource="webcrafter.app.ctx.xml"/>
+
+    <bean id="WebCrafterServiceRMI" class="org.springframework.remoting.rmi.RmiServiceExporter">
+        <property name="service" ref="WebCrafterService"/>
+        <property name="serviceInterface" value="ru.webcrafter.core.WebCrafterService"/>
+        <property name="serviceName" value="WebCrafterService"/>
+        <property name="registryPort" value="1099"/>
+    </bean>
+</beans>

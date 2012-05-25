@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+    <!-- Properties files -->
+    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:jdbc.properties"/>
+    </bean>
+
+    <!-- Jdbc datasources -->
+    <bean id="webcrafterDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${ru.webcrafter.jdbc.driverClassName}"/>
+        <property name="url" value="${ru.webcrafter.jdbc.url}"/>
+        <property name="username" value="${ru.webcrafter.jdbc.username}"/>
+        <property name="password" value="${ru.webcrafter.jdbc.password}"/>
+    </bean>
+
+    <!-- Hibernate SessionFactories -->
+    <bean id="webcrafterSessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+        <property name="dataSource" ref="webcrafterDataSource"/>
+        <property name="mappingResources">
+            <value>hibernate.items.xml</value>
+        </property>
+        <property name="configurationClass">
+            <value>org.hibernate.cfg.AnnotationConfiguration</value>
+        </property>
+
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">${hibernate.dialect}</prop>
+                <prop key="hibernate.show_sql">true</prop>
+                <prop key="hibernate.connection.autocommit">false</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="webcrafterHibernateTemplate" class="org.springframework.orm.hibernate3.HibernateTemplate">
+        <constructor-arg>
+            <ref bean="webcrafterSessionFactory"/>
+        </constructor-arg>
+    </bean>
+</beans>
