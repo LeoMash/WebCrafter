@@ -117,6 +117,9 @@ public class WebCrafterServiceImpl implements WebCrafterService {
         int itemsCount = rnd.nextInt(15) + 15;
         List<ItemTemplate> itemTemplates = getAllItemTemplates();
         int itemTemplatesCount = itemTemplates.size();
+        if (itemTemplatesCount == 0) {
+            return;
+        }
         Map<String, Long> items = new HashMap<String, Long>();
         for (int i = 0; i < itemsCount; ++i) {
             int idxItem = rnd.nextInt(itemTemplatesCount);
